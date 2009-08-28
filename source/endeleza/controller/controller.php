@@ -6,7 +6,7 @@
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-/**
+/*
  * Import Joomla! dependency
  */
 jimport('joomla.application.component.controller');
@@ -19,6 +19,26 @@ jimport('joomla.application.component.controller');
  */
 class EController extends JController
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param	array An optional associative array of configuration settings.
+	 */
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+
+		// we should remove helper methods from task list
+		$eMethods	= get_class_methods('EController');
+		$jMethods	= get_class_methods('JController');
+		$methods	= array_diff($eMethods, $jMethods);
+
+		foreach ($methods as $method) {
+			$method = strtolower($method);
+			unset($this->_taskMap[$method]);
+		}
+	}
+
 	/**
 	 * Method to get a singleton controller instance.
 	 *
