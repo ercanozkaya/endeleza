@@ -1,6 +1,5 @@
 <?php
 /**
- * @version		$Id$
  * @package		Endeleza
  * @subpackage	Model
  * @copyright	Copyright (C) 2009 Ercan Ozkaya. All rights reserved.
