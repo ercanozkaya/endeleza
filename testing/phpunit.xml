@@ -1,6 +1,6 @@
 <phpunit
 	bootstrap="loader.php"
-	colors="true"
+	colors="false"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"

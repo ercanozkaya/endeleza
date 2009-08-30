@@ -1,6 +1,6 @@
 <?php
 
-class EInflectorTest extends PHPUnit_Framework_TestCase
+class EControllerTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
@@ -13,7 +13,7 @@ class EInflectorTest extends PHPUnit_Framework_TestCase
 		//jimport('joomla.database.query');
 	}
 
-	public function testAdding()
+	public function testRedirect()
 	{
 		$this->markTestIncomplete();
 	}
