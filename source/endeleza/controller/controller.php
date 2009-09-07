@@ -107,7 +107,7 @@ class EController extends JController
 		}
 		else {
 			// Default model names are always singular
-			$this->_defaultModel = empty($suffix) ? $prefix : $suffix;}
+			$this->_defaultModel = empty($suffix) ? $prefix : $suffix;
 		}
 	}
 
