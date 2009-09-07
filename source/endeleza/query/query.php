@@ -12,7 +12,7 @@
  * @package		Endeleza
  * @subpackage	Database
  */
-class EDatabaseQuery
+class EQuery
 {
 	/** @var string The query type */
 	protected $_type = '';
@@ -38,7 +38,7 @@ class EDatabaseQuery
 	{
 		$this->_type = 'select';
 		if (is_null($this->_select)) {
-			$this->_select = new EDatabaseQueryElement('SELECT', $columns);
+			$this->_select = new EQueryElement('SELECT', $columns);
 		} else {
 			$this->_select->append($columns);
 		}
@@ -52,7 +52,7 @@ class EDatabaseQuery
 	public function from($tables)
 	{
 		if (is_null($this->_from)) {
-			$this->_from = new EDatabaseQueryElement('FROM', $tables);
+			$this->_from = new EQueryElement('FROM', $tables);
 		} else {
 			$this->_from->append($tables);
 		}
@@ -69,7 +69,7 @@ class EDatabaseQuery
 		if (is_null($this->_join)) {
 			$this->_join = array();
 		}
-		$this->_join[] = new EDatabaseQueryElement(strtoupper($type) . ' JOIN', $conditions);
+		$this->_join[] = new EQueryElement(strtoupper($type) . ' JOIN', $conditions);
 
 		return $this;
 	}
@@ -122,7 +122,7 @@ class EDatabaseQuery
 	{
 		if (is_null($this->_where)) {
 			$glue = strtoupper($glue);
-			$this->_where = new EDatabaseQueryElement('WHERE', $conditions, "\n\t$glue ");
+			$this->_where = new EQueryElement('WHERE', $conditions, "\n\t$glue ");
 		} else {
 			$this->_where->append($conditions);
 		}
@@ -136,7 +136,7 @@ class EDatabaseQuery
 	public function group($columns)
 	{
 		if (is_null($this->_group)) {
-			$this->_group = new EDatabaseQueryElement('GROUP BY', $columns);
+			$this->_group = new EQueryElement('GROUP BY', $columns);
 		} else {
 			$this->_group->append($columns);
 		}
@@ -150,7 +150,7 @@ class EDatabaseQuery
 	public function having($columns)
 	{
 		if (is_null($this->_having)) {
-			$this->_having = new EDatabaseQueryElement('HAVING', $columns);
+			$this->_having = new EQueryElement('HAVING', $columns);
 		} else {
 			$this->_having->append($columns);
 		}
@@ -164,7 +164,7 @@ class EDatabaseQuery
 	public function order($columns)
 	{
 		if (is_null($this->_order)) {
-			$this->_order = new EDatabaseQueryElement('ORDER BY', $columns);
+			$this->_order = new EQueryElement('ORDER BY', $columns);
 		} else {
 			$this->_order->append($columns);
 		}
@@ -219,7 +219,7 @@ class EDatabaseQuery
 }
 
 
-class EDatabaseQueryElement
+class EQueryElement
 {
 	/** @var string The name of the element */
 	protected $_name = null;
