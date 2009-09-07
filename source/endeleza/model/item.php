@@ -60,7 +60,15 @@ class EModelItem extends EModel
 	 */
 	public function save($data)
 	{
-		$id = (int) (!empty($data['id']) ? $data['id'] : $this->getState('id'));
+		if (empty($data['id'])) {
+			$id = (int) $this->getState('id');
+		}
+		else {
+			$id = (int) $data['id'];
+
+			// This calls the _populateState method
+			$this->getState();
+		}
 		$this->setState('id', $id);
 
 		$isNew	= true;
@@ -247,7 +255,7 @@ class EModelItem extends EModel
 	 * @param bool	True of item to be saved is new
 	 * @return void
 	 */
-	protected function _prepareTable(&$table, $isNew)
+	protected function _prepareTable(&$table, $isNew = false)
 	{
 	}
 
