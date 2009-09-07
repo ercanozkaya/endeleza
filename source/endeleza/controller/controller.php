@@ -112,6 +112,60 @@ class EController extends JController
 	}
 
 	/**
+	 * Typical view method for MVC based architecture
+	 *
+	 * @param	string	If true, the view output will be cached
+	 */
+	public function display($cachable = false)
+	{
+		$document =& JFactory::getDocument();
+
+		$viewType	= $document->getType();
+		$viewName	= JRequest::getCmd('view', $this->_defaultView);
+		$viewLayout	= JRequest::getCmd('layout', 'default');
+
+		$view = &$this->getView($viewName, $viewType, '', array('base_path'=>$this->_basePath));
+
+		// Get/Create the model
+		if ($model = &$this->getModel($viewName)) {
+			// Push the model into the view (as default)
+			$view->setModel($model, true);
+		}
+
+		// Set the layout
+		$view->setLayout($viewLayout);
+
+		// Assing a JDocument instance to our view
+		$view->assignRef('document', $document);
+
+		// Display the view
+		if ($cachable && $viewType != 'feed') {
+			$option = JRequest::getCmd('option');
+			$cache =& JFactory::getCache($option, 'view');
+			$cache->get($view, 'display');
+		} else {
+			$view->display();
+		}
+	}
+
+	/**
+	 * Overloaded function to override name
+	 *
+	 * @param	string	The model name. Optional.
+	 * @param	string	The class prefix. Optional.
+	 * @param	array	Configuration array for model. Optional.
+	 * @return	object	The model.
+	 */
+	public function &getModel($name = '', $prefix = '', $config = array())
+	{
+		if (empty($name)) {
+			$name = $this->_defaultModel;
+		}
+
+		return parent::getModel($name, $prefix, $config);
+	}
+
+	/**
 	 * Set a URL for browser redirection.
 	 *
 	 * @param	mixed  A string for URL to redirect to or a named array.
