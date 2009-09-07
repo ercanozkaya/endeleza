@@ -929,6 +929,9 @@ class EForm extends JObject
 		if (!class_exists('JFormFieldList')) {
 			require_once dirname(__FILE__).DS.'fields'.DS.'list.php';
 		}
+		if (!class_exists('JFormFieldText')) {
+			require_once dirname(__FILE__).DS.'fields'.DS.'text.php';
+		}
 
 		if (!class_exists($class))
 		{
