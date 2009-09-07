@@ -121,7 +121,7 @@ class EModelList extends EModel
 		$this->setState('list.start', $app->getUserStateFromRequest($context.'list.start', 'limitstart', 0, 'int'));
 		$this->setState('list.limit', $app->getUserStateFromRequest($context.'list.limit', 'limit', $app->getCfg('list_limit'), 'int'));
 
-		$this->setState('list.ordering', $app->getUserStateFromRequest($context.'list.ordering', 'filter_order', '', 'cmd'));
+		$this->setState('list.ordering', $app->getUserStateFromRequest($context.'list.ordering', 'filter_order', null, 'cmd'));
 		$this->setState('list.direction', $app->getUserStateFromRequest($context.'list.direction', 'filter_order_Dir', 'ASC', 'word'));
 	}
 }
