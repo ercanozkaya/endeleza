@@ -20,6 +20,13 @@ jimport('joomla.application.component.controller');
 class EController extends JController
 {
 	/**
+	 * The name suffix of the controller
+	 *
+	 * @var	string
+	 */
+	protected $_suffix = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param	array An optional associative array of configuration settings.
@@ -37,6 +44,34 @@ class EController extends JController
 			$method = strtolower($method);
 			unset($this->_taskMap[$method]);
 		}
+
+		if (array_key_exists('suffix', $config)) {
+			$this->_suffix = $config['suffix'];
+		} else {
+			$this->_suffix = $this->getNameSuffix();
+		}
+	}
+
+	/**
+	 * Method to get the controller name suffix
+	 *
+	 * By default, it is found by parsing class name, or it can be set
+	 * by passing a $config['suffix'] in the class constructor
+	 *
+	 * @return	string The name suffix of the controller
+	 */
+	public function getNameSuffix()
+	{
+		if (empty($this->_suffix)) {
+			$matches = null;
+			$result = null;
+
+			if (preg_match('/Controller(.*)$/i', get_class($this), $matches)) {
+				$this->_suffix = $matches[1];
+			}
+		}
+
+		return $this->_suffix;
 	}
 
 	/**
