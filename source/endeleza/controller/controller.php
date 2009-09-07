@@ -53,6 +53,67 @@ class EController extends JController
 	}
 
 	/**
+	 * Set a URL for browser redirection.
+	 *
+	 * @param	mixed  A string for URL to redirect to or a named array.
+	 * @param	string	Message to display on redirect. Optional, defaults to
+	 * 			value set internally by controller, if any.
+	 * @param	string	Message type. Optional, defaults to 'message'.
+	 * @param	bool	If true, URL will be run through JRoute::_
+	 * @return	void
+	 */
+	public function setRedirect($url = null, $msg = null, $type = 'message', $route = true)
+	{
+		if (is_array($url)) {
+			// convert to string
+			$url = $this->_buildURLFromArray($url);
+		}
+		elseif ($url === null) {
+			$url = 'index.php?option=com_'.strtolower($this->getName());
+		}
+
+		if ($route === true) {
+			$url = JRoute::_($url, false);
+		}
+
+		parent::setRedirect($url, $msg, $type);
+	}
+
+	/**
+	 * Converts a named array to URL for redirection
+	 *
+	 * @param  array Named array
+	 * @return string Redirect URL
+	 */
+	protected function _buildURLFromArray(&$url)
+	{
+		$str = '';
+		$str .= 'index.php?option=';
+
+		// add component name
+		$str .= !empty($url['option']) ? $url['option'] : 'com_'.strtolower($this->getName());
+		unset($url['option']);
+
+		// add task to the url
+		if (isset($url['task'])) {
+			$str .= '&task='.$url['task'];
+			unset($url['task']);
+		}
+
+		// add specified view to the url if set, otherwise use default view
+		if (isset($url['view'])) {
+			$str .= '&view='.(!empty($url['view']) ? $url['view'] : $this->_listView);
+			unset($url['view']);
+		}
+
+		foreach ($url as $key => $value) {
+			$str .= '&'.$key.'='.$value;
+		}
+
+		return $str;
+	}
+
+	/**
 	 * Method to get the controller name suffix
 	 *
 	 * By default, it is found by parsing class name, or it can be set
