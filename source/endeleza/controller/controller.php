@@ -27,6 +27,21 @@ class EController extends JController
 	protected $_suffix = null;
 
 	/**
+	 * Default view name
+	 *
+	 * @var string
+	 */
+	protected $_defaultView = null;
+
+
+	/**
+	 * Default model name
+	 *
+	 * @var string
+	 */
+	protected $_defaultModel = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param	array An optional associative array of configuration settings.
@@ -47,8 +62,52 @@ class EController extends JController
 
 		if (array_key_exists('suffix', $config)) {
 			$this->_suffix = $config['suffix'];
-		} else {
+		}
+		else {
 			$this->_suffix = $this->getNameSuffix();
+		}
+
+		$this->_setDefaultNames($config);
+	}
+
+	/**
+	 * Set default names for views and models
+	 *
+	 * @param	array An optional associative array of configuration settings.
+	 * @return	void
+	 */
+	protected function _setDefaultNames($config)
+	{
+		$prefix = strtolower($this->getName());
+		$suffix = strtolower($this->getNameSuffix());
+
+		// Default view name
+		if (array_key_exists('default_view', $config)) {
+			$this->_defaultView = $config['default_view'];
+		}
+		else {
+			if (empty($suffix)) {
+				// use the prefix
+				$this->_defaultView = $prefix;
+			}
+			else {
+				// Use suffix if it's plural, otherwise plurizalize it
+				if (EInflector::isSingular($suffix)) {
+					$this->_defaultView = EInflector::getPlural($suffix);
+				}
+				else {
+					$this->_defaultView = $suffix;
+				}
+			}
+		}
+
+		// Default model name
+		if (array_key_exists('default_model', $config)) {
+			$this->_defaultModel = $config['default_model'];
+		}
+		else {
+			// Default model names are always singular
+			$this->_defaultModel = empty($suffix) ? $prefix : $suffix;}
 		}
 	}
 
