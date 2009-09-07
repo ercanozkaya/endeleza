@@ -55,11 +55,12 @@ class EModel extends JModel
 	public function getState($property = null, $default = null)
 	{
 		if (!$this->__state_set) {
+			// Set the model state set flat to true.
+			$this->__state_set = true;
+			
 			// Private method to auto-populate the model state.
 			$this->_populateState();
 
-			// Set the model state set flat to true.
-			$this->__state_set = true;
 		}
 
 		return $property === null ? $this->_state : $this->_state->get($property, $default);
