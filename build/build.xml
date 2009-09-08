@@ -4,7 +4,7 @@
 	<property name="package_name" value="endeleza" />
 	<property name="source" value="../source" />
 
-    <target name="build">
+	<target name="build">
 		<zip destfile="./${package_name}.zip" basedir="${source}" />
-    </target>
+	</target>
 </project>
