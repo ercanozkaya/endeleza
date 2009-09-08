@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="endeleza" basedir="." default="build">
+	<property name="package_name" value="endeleza" />
+	<property name="source" value="../source" />
+
+    <target name="build">
+		<zip destfile="./${package_name}.zip" basedir="${source}" />
+    </target>
+</project>
