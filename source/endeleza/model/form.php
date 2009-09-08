@@ -75,9 +75,14 @@ class EModelForm extends EModelItem
 		EForm::addFieldPath(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'fields');
 		EFormValidator::addRulePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'rules');
 
-		EForm::addFormPath(JPATH_COMPONENT_SITE.DS.'models'.DS.'forms');
-		EForm::addFieldPath(JPATH_COMPONENT_SITE.DS.'models'.DS.'fields');
-		EFormValidator::addRulePath(JPATH_COMPONENT_SITE.DS.'models'.DS.'rules');
+		$app = JFactory::getApplication();
+
+		if ($app->isSite()) {
+			EForm::addFormPath(JPATH_COMPONENT_SITE.DS.'models'.DS.'forms');
+			EForm::addFieldPath(JPATH_COMPONENT_SITE.DS.'models'.DS.'fields');
+			EFormValidator::addRulePath(JPATH_COMPONENT_SITE.DS.'models'.DS.'rules');
+		}
+
 
 		$form = &EForm::getInstance($xml, $name, $options['file'], $options);
 
