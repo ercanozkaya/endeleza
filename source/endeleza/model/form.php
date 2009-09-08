@@ -21,6 +21,28 @@ class EModelForm extends EModelItem
 	protected $_forms = array();
 
 	/**
+	 * Overloaded save method to validate the data first
+	 *
+	 * @param array	Data array
+	 * @return bool|int False on failure. Item ID if successfull
+	 */
+	public function save($data)
+	{
+		$form = $this->getForm();
+		if ($form === false) {
+			return false;
+		}
+
+		$data = $this->validate($form, $data);
+
+		if ($data === false) {
+			return false;
+		}
+
+		return parent::save($data);
+	}
+
+	/**
 	 * Method to get a form object.
 	 *
 	 * @param	string		$xml		The form data. Can be XML string if file flag is set to false.
@@ -57,7 +79,7 @@ class EModelForm extends EModelItem
 		EForm::addFieldPath(JPATH_COMPONENT_SITE.DS.'models'.DS.'fields');
 		EFormValidator::addRulePath(JPATH_COMPONENT_SITE.DS.'models'.DS.'rules');
 
-		$form = &JForm::getInstance($xml, $name, $options['file'], $options);
+		$form = &EForm::getInstance($xml, $name, $options['file'], $options);
 
 		// Check for an error.
 		if (JError::isError($form))
