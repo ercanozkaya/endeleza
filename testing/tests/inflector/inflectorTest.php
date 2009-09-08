@@ -4,17 +4,39 @@ class EInflectorTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		// Set up minimalist Joomla framework
-		if (! defined('_JEXEC')) {
-			define('_JEXEC', 1);
-		}
-
-		// include other dependancies
-		//jimport('joomla.database.query');
+		EInflector::addWord('singular', 'plural');
 	}
 
-	public function testAdding()
+	public function testGetPlural()
 	{
-		$this->markTestIncomplete();
+		$this->assertEquals('singular', EInflector::getSingular('plural'));
+	}
+
+	public function testGetSingular()
+	{
+		$this->assertEquals('plural', EInflector::getPlural('singular'));
+	}
+
+	public function testOverride()
+	{
+		EInflector::addWord('singular', 'test');
+
+		$this->assertEquals('singular', EInflector::getSingular('test'));
+		$this->assertEquals('test', EInflector::getPlural('singular'));
+	}
+
+	public function testIsPlural()
+	{
+		$this->assertTrue(EInflector::isSingular('singular'));
+		$this->assertTrue(EInflector::isPlural('plural'));
+
+		$this->assertFalse(EInflector::isSingular('random'));
+		$this->assertFalse(EInflector::isPlural('random'));
+	}
+
+	public function testInvalidValues()
+	{
+		$this->assertEquals(null, EInflector::getSingular('randomword'));
+		$this->assertEquals(null, EInflector::getPlural('randomword'));
 	}
 }
