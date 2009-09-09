@@ -1,3 +1,7 @@
+# Ignore Eclipse project files
 .buildpath
 .project
 .settings
+
+# Ignore packages
+build/endeleza.*
