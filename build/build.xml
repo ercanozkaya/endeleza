@@ -3,13 +3,39 @@
 <project name="endeleza" basedir="." default="build">
 	<property name="package_name" value="endeleza" />
 	<property name="source" value="../source" />
+	<property name="testing" value="../testing" />
 
 	<php expression="require_once '${source}/endeleza/endeleza.php';" />
 	<php expression="Endeleza::getVersion();" returnProperty="version" />
 
-	<target name="build">
+	<target name="build" depends="check_syntax,run_unittests,create_packages">
+	</target>
+
+	<target name="check_syntax">
+		<echo msg="Looking for syntax errors" />
+		<phplint haltonfailure="true">
+			<fileset dir="${source}">
+				<include name="**/*.php"/>
+			</fileset>
+		</phplint>
+	</target>
+
+	<target name="run_unittests">
+		<echo msg="Running unit tests" />
+		<phpunit haltonfailure="true" haltonerror="true">
+			<formatter type="plain" usefile="false" />
+			<batchtest>
+				<fileset dir="${testing}/tests">
+					<include name="**/*Test*.php"/>
+				</fileset>
+			</batchtest>
+		</phpunit>
+	</target>
+
+	<target name="create_packages">
 		<echo msg="Building packages for version ${version}" />
 		<zip destfile="./${package_name}.${version}.zip" basedir="${source}" />
 		<tar destfile="./${package_name}.${version}.tar.gz" basedir="${source}" compression="gzip"/>
 	</target>
+
 </project>
