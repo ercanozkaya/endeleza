@@ -4,7 +4,12 @@
 	<property name="package_name" value="endeleza" />
 	<property name="source" value="../source" />
 
+	<php expression="require_once '${source}/endeleza/endeleza.php';" />
+	<php expression="Endeleza::getVersion();" returnProperty="version" />
+
 	<target name="build">
-		<zip destfile="./${package_name}.zip" basedir="${source}" />
+		<echo msg="Building packages for version ${version}" />
+		<zip destfile="./${package_name}.${version}.zip" basedir="${source}" />
+		<tar destfile="./${package_name}.${version}.tar.gz" basedir="${source}" compression="gzip"/>
 	</target>
 </project>
