@@ -32,6 +32,11 @@ class EModel extends JModel
 	protected $__state_set = false;
 
 	/**
+	 * @var string Class name prefix
+	 */
+	protected $_prefix = null;
+
+	/**
 	 * Overridden constructor
 	 *
 	 * @param	array	Configuration array
@@ -42,7 +47,43 @@ class EModel extends JModel
 			$this->__state_set = true;
 		}
 
+		$this->_prefix = isset($config['prefix']) ? $config['prefix'] : $this->getNamePrefix();
+
 		parent::__construct($config);
+	}
+
+	public function getTable($name = '', $prefix = '', $options = array())
+	{
+		if (empty($name)) {
+			$name = $this->getName();
+		}
+
+		if (empty($prefix)) {
+			$prefix = $this->getNamePrefix().'Table';
+		}
+
+		return parent::getTable($name, $prefix, $options);
+	}
+
+	/**
+	 * Method to get the model name prefix
+	 *
+	 * By default, it is found by parsing class name, or it can be set
+	 * by passing a $config['prefix'] in the class constructor
+	 *
+	 * @return	string The name prefix of the model
+	 */
+	public function getNamePrefix()
+	{
+		if (empty($this->_prefix)) {
+			$matches = null;
+
+			if (preg_match('/(.*)Model/i', get_class($this), $matches)) {
+				$this->_prefix = $matches[1];
+			}
+		}
+
+		return $this->_prefix;
 	}
 
 	/**
@@ -57,7 +98,7 @@ class EModel extends JModel
 		if (!$this->__state_set) {
 			// Set the model state set flat to true.
 			$this->__state_set = true;
-			
+
 			// Private method to auto-populate the model state.
 			$this->_populateState();
 

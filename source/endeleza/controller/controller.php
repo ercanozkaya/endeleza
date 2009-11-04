@@ -60,12 +60,7 @@ class EController extends JController
 			unset($this->_taskMap[$method]);
 		}
 
-		if (array_key_exists('suffix', $config)) {
-			$this->_suffix = $config['suffix'];
-		}
-		else {
-			$this->_suffix = $this->getNameSuffix();
-		}
+		$this->_suffix = isset($config['suffix']) ? $config['suffix'] : $this->getNameSuffix();
 
 		$this->_setDefaultNames($config);
 	}
@@ -238,7 +233,6 @@ class EController extends JController
 	{
 		if (empty($this->_suffix)) {
 			$matches = null;
-			$result = null;
 
 			if (preg_match('/Controller(.*)$/i', get_class($this), $matches)) {
 				$this->_suffix = $matches[1];
