@@ -4,39 +4,35 @@ class EInflectorTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		EInflector::addWord('singular', 'plural');
 	}
 
-	public function testGetPlural()
+	public function testPluralize()
 	{
-		$this->assertEquals('singular', EInflector::getSingular('plural'));
+		$this->assertEquals('tests', EInflector::pluralize('test'));
 	}
 
-	public function testGetSingular()
+	public function testSingularize()
 	{
-		$this->assertEquals('plural', EInflector::getPlural('singular'));
+		$this->assertEquals('test', EInflector::singularize('tests'));
 	}
 
-	public function testOverride()
+	public function testUncountable()
 	{
-		EInflector::addWord('singular', 'test');
-
-		$this->assertEquals('singular', EInflector::getSingular('test'));
-		$this->assertEquals('test', EInflector::getPlural('singular'));
+		$this->assertEquals('aircraft', EInflector::singularize('aircraft'));
+		$this->assertEquals('aircraft', EInflector::pluralize('aircraft'));
 	}
 
 	public function testIsPlural()
 	{
-		$this->assertTrue(EInflector::isSingular('singular'));
-		$this->assertTrue(EInflector::isPlural('plural'));
-
-		$this->assertFalse(EInflector::isSingular('random'));
-		$this->assertFalse(EInflector::isPlural('random'));
+		$this->assertTrue(EInflector::isSingular('test'));
+		$this->assertTrue(EInflector::isPlural('tests'));
 	}
 
-	public function testInvalidValues()
+	public function testOverride()
 	{
-		$this->assertEquals(null, EInflector::getSingular('randomword'));
-		$this->assertEquals(null, EInflector::getPlural('randomword'));
+		EInflector::addWord('test', 'different_plural');
+
+		$this->assertEquals('test', EInflector::singularize('different_plural'));
+		$this->assertEquals('different_plural', EInflector::pluralize('test'));
 	}
 }

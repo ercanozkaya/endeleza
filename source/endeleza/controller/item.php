@@ -44,7 +44,7 @@ class EControllerItem extends EController
 	 * @param	array An optional associative array of configuration settings.
 	 * @return	void
 	 */
-	protected function _setDefaultNames($config)
+	protected function _setDefaultNames($config = array())
 	{
 		parent::_setDefaultNames($config);
 
@@ -57,7 +57,7 @@ class EControllerItem extends EController
 		}
 		else {
 			if (EInflector::isSingular($this->_defaultView)) {
-				$this->_listView = EInflector::getPlural($this->_defaultView);
+				$this->_listView = EInflector::pluralize($this->_defaultView);
 			}
 			else {
 				$this->_listView = $this->_defaultView;
@@ -69,7 +69,7 @@ class EControllerItem extends EController
 			$this->_itemView = $config['item_view'];
 		}
 		else {
-			$singularView = EInflector::getSingular($this->_listView);
+			$singularView = EInflector::singularize($this->_listView);
 
 			if (!empty($singularView)) {
 				$this->_itemView = $singularView;

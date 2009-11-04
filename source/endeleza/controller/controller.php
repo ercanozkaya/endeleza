@@ -76,7 +76,7 @@ class EController extends JController
 	 * @param	array An optional associative array of configuration settings.
 	 * @return	void
 	 */
-	protected function _setDefaultNames($config)
+	protected function _setDefaultNames($config = array())
 	{
 		$prefix = strtolower($this->getName());
 		$suffix = strtolower($this->getNameSuffix());
@@ -93,7 +93,7 @@ class EController extends JController
 			else {
 				// Use suffix if it's plural, otherwise plurizalize it
 				if (EInflector::isSingular($suffix)) {
-					$this->_defaultView = EInflector::getPlural($suffix);
+					$this->_defaultView = EInflector::pluralize($suffix);
 				}
 				else {
 					$this->_defaultView = $suffix;
