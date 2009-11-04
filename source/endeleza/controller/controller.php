@@ -257,54 +257,44 @@ class EController extends JController
 	 */
 	public static function &getInstance($prefix = null, $config = array())
 	{
-		// Get the environment configuration.
-		$basePath	= array_key_exists('base_path', $config) ? $config['base_path'] : JPATH_COMPONENT;
-		$protocol	= JRequest::getWord('protocol');
-		$command	= JRequest::getCmd('task', null);
+		$path 		= isset($config['base_path']) ? $config['base_path'] : JPATH_COMPONENT;
+		$protocol 	= JRequest::getWord('protocol');
+		$task 		= JRequest::getCmd('task');
 
-		// Use component name if a prefix is not supplied
-		$prefix = !empty($prefix) ? $prefix : str_replace('com_', '', JRequest::getCmd('option'));
+		// use component name if a prefix is not supplied
+		$prefix 	= !empty($prefix) ? $prefix : str_replace('com_', '', JRequest::getCmd('option'));
+		$suffix		= '';
 
-		if (strpos($command, '.') !== false) {
-			// We have a defined controller/task pair -- lets split them out
-			list($controller, $task) = explode('.', $command);
-			$controller	= strtolower($controller);
-
-			// Define the controller filename and path.
-			$file	= self::_createFileName('controller', array('name' => $controller, 'protocol' => $protocol));
-			$path	= $basePath.DS.'controllers'.DS.$file;
-
-			// Reset the task without the contoller context.
-			JRequest::setVar('task', $task);
-		} else {
-			// Base controller.
-			$controller	= '';
-			$task	= $command;
-
-			// Define the controller filename and path.
-			$file	= self::_createFileName('controller', array('name' => 'controller', 'protocol' => $protocol));
-			$path	= $basePath.DS.$file;
+		if (strpos($task, '.') !== false) {
+			// we have a defined controller/task pair. split them out and reset the task
+			$pieces = explode('.', $task);
+			$suffix = $pieces[0];
+			JRequest::setVar('task', $pieces[1]);
 		}
 
+		$file 	= self::_createFileName('controller', array('name' => $suffix, 'protocol' => $protocol));
+		$path 	.= '/'.(!empty($suffix) ? 'controllers/' : '').$file;
+
 		// Get the controller class name.
-		$class = ucfirst($prefix).'Controller'.ucfirst($controller);
+		$className = ucfirst($prefix).'Controller'.ucfirst($suffix);
 
 		// Include the class if not present.
-		if (!class_exists($class)) {
-			if (file_exists($path)) {
-				require_once $path;
-			}
+		if (!class_exists($className) && file_exists($path)) {
+			require_once $path;
 		}
 
 		// Instantiate the class.
-		if (class_exists($class)) {
-			$instance = new $class($config);
-		} else {
-			// Fallback to EController
+		if (!class_exists($className)) {
+			// Fallback to EController or EControllerItem
 			$config['name'] = ucfirst($prefix);
-			$instance = new EController($config);
+			$className = 'EController';
+			if (!empty($suffix)) {
+				$config['suffix'] = ucfirst($suffix);
+				$className .= 'Item';
+			}
 		}
 
+		$instance = new $className($config);
 		return $instance;
 	}
 
@@ -322,6 +312,9 @@ class EController extends JController
 
 		switch ($type) {
 			case 'controller':
+				if (empty($parts['name'])) {
+					$parts['name'] = 'controller';
+				}
 				if (!empty($parts['protocol'])) {
 					$parts['protocol'] = '.'.$parts['protocol'];
 				}
