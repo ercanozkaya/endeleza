@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: integers.php 12298 2009-06-22 11:34:51Z eddieajau $
+ * @version		$Id: integer.php 13482 2009-11-13 00:26:37Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
  * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -18,14 +18,14 @@ require_once dirname(__FILE__).DS.'list.php';
  * @subpackage	Form
  * @since		1.6
  */
-class JFormFieldIntegers extends JFormFieldList
+class JFormFieldInteger extends JFormFieldList
 {
 	/**
 	 * The field type.
 	 *
 	 * @var		string
 	 */
-	public $type = 'Integers';
+	protected $type = 'Integer';
 
 	/**
 	 * Method to get a list of options for a list input.

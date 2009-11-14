@@ -3,6 +3,8 @@
  * @package		Endeleza
  * @subpackage	Form
  * @copyright	Copyright (C) 2009 Ercan Ozkaya. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -22,7 +24,6 @@ class EFormRule
 	/**
 	 * The regular expression.
 	 *
-	 * @access	protected
 	 * @var		string
 	 * @since	1.6
 	 */
@@ -31,7 +32,6 @@ class EFormRule
 	/**
 	 * The regular expression modifiers.
 	 *
-	 * @access	protected
 	 * @var		string
 	 * @since	1.6
 	 */
@@ -40,14 +40,13 @@ class EFormRule
 	/**
 	 * Method to test the value.
 	 *
-	 * @access	public
 	 * @param	object		$field		A reference to the form field.
 	 * @param	mixed		$values		The values to test for validiaty.
 	 * @return	boolean		True if the value is valid, false otherwise.
 	 * @since	1.6
 	 * @throws	JException on invalid rule.
 	 */
-	public function test(&$field, $values)
+	public function test(&$field, &$values)
 	{
 		$return = false;
 		$name	= $field->attributes('name');

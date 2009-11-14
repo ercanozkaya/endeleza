@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: calendar.php 11952 2009-06-01 03:21:19Z robs $
+ * @version		$Id: calendar.php 13359 2009-10-28 04:23:55Z louis $
  * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
  * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -9,7 +9,7 @@
 defined('JPATH_BASE') or die;
 
 jimport('joomla.html.html');
-jimport('joomla.form.field');
+require_once dirname(__FILE__).'/text.php';
 
 /**
  * Form Field class for the Joomla Framework.

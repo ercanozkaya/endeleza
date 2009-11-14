@@ -3,6 +3,8 @@
  * @package		Endeleza
  * @subpackage	Form
  * @copyright	Copyright (C) 2009 Ercan Ozkaya. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -22,16 +24,14 @@ abstract class EFormField extends JObject
 	/**
 	 * The field type.
 	 *
-	 * @access	public
 	 * @var		string
 	 * @since	1.6
 	 */
-	public $type;
+	protected $type;
 
    /**
 	* A reference to the form object that the field belongs to.
 	*
-	* @access	protected
 	* @var		object
 	* @since	1.6
 	*/
@@ -40,7 +40,6 @@ abstract class EFormField extends JObject
 	/**
 	 * Method to instantiate the form field.
 	 *
-	 * @access	public
 	 * @param	object		$form		A reference to the form that the field belongs to.
 	 * @return	void
 	 * @since	1.6
@@ -53,11 +52,11 @@ abstract class EFormField extends JObject
    /**
 	* Method to get the form field type.
 	*
-	* @access	public
 	* @return	string		The field type.
 	* @since	1.6
 	*/
-	public function getType() {
+	public function getType()
+	{
 		return $this->type;
 	}
 
@@ -113,24 +112,20 @@ abstract class EFormField extends JObject
 	/**
 	 * Method to get the field label.
 	 *
-	 * @access	protected
 	 * @return	string		The field label.
 	 * @since	1.6
 	 */
 	protected function _getLabel()
 	{
-		// Get the id of the input.
-		$id	= $this->_getInputId($this->id, $this->name, $this->formName, $this->groupName);
-
 		// Set the class for the label.
 		$class = !empty($this->descText) ? 'hasTip' : '';
 		$class = $this->required == true ? $class.' required' : $class;
 
 		// If a description is specified, use it to build a tooltip.
 		if (!empty($this->descText)) {
-			$label = '<label id="'.$id.'-lbl" for="'.$id.'" class="'.$class.'" title="'.trim(JText::_($this->labelText, true), ':').'::'.JText::_($this->descText, true).'">';
+			$label = '<label id="'.$this->inputId.'-lbl" for="'.$this->inputId.'" class="'.$class.'" title="'.trim(JText::_($this->labelText, true), ':').'::'.JText::_($this->descText, true).'">';
 		} else {
-			$label = '<label id="'.$id.'-lbl" for="'.$id.'" class="'.$class.'">';
+			$label = '<label id="'.$this->inputId.'-lbl" for="'.$this->inputId.'" class="'.$class.'">';
 		}
 
 		$label .= JText::_($this->labelText);
@@ -142,7 +137,6 @@ abstract class EFormField extends JObject
 	/**
 	 * Method to get the name of the input field.
 	 *
-	 * @access	protected
 	 * @param	string		$fieldName		The field name.
 	 * @param	string		$formName		The form name.
 	 * @param	string		$groupName		The group name.
@@ -180,7 +174,6 @@ abstract class EFormField extends JObject
 	/**
 	 * Method to get the id of the input field.
 	 *
-	 * @access	protected
 	 * @param	string		$fieldId		The field id.
 	 * @param	string		$fieldName		The field name.
 	 * @param	string		$formName		The form name.
@@ -211,6 +204,9 @@ abstract class EFormField extends JObject
 		else {
 			$return = $formName.'_'.$groupName.'_'.$fieldId;
 		}
+
+		// Clean up any invalid characters.
+		$return = preg_replace('#\W#', '_', $return);
 
 		return $return;
 	}

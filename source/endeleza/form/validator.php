@@ -3,6 +3,8 @@
  * @package		Endeleza
  * @subpackage	Form
  * @copyright	Copyright (C) 2009 Ercan Ozkaya. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -18,7 +20,6 @@ class EFormValidator extends JObject
 	/**
 	 * Method to validate a group of fields.
 	 *
-	 * @access	public
 	 * @param	array		$fields		An array of fields to validate.
 	 * @param	array		$data		The data to validate.
 	 * @return	mixed		Array on success, JException on error.
@@ -77,7 +78,6 @@ class EFormValidator extends JObject
 	/**
 	 * Method to test if a value is valid for a field.
 	 *
-	 * @access	protected
 	 * @param	object		$field		The field to validate.
 	 * @param	array		$values		The values to validate.
 	 * @return	mixed		Boolean on success, JException on error.
@@ -118,7 +118,6 @@ class EFormValidator extends JObject
 	/**
 	 * Method to add a path to the list of rule include paths.
 	 *
-	 * @access	public
 	 * @param	mixed		$new		A path or array of paths to add.
 	 * @return	array		The list of paths that have been added.
 	 * @since	1.6

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: password.php 11952 2009-06-01 03:21:19Z robs $
+ * @version		$Id: password.php 12774 2009-09-18 04:47:09Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
  * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -24,7 +24,7 @@ class JFormFieldPassword extends JFormField
 	 *
 	 * @var		string
 	 */
-	public $type = 'Password';
+	protected $type = 'Password';
 
 	/**
 	 * Method to get the field input.

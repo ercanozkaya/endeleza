@@ -3,6 +3,8 @@
  * @package		Endeleza
  * @subpackage	Form
  * @copyright	Copyright (C) 2009 Ercan Ozkaya. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2008 - 2009 JXtended, LLC. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -19,7 +21,6 @@ class EForm extends JObject
 	/**
 	 * The form name.
 	 *
-	 * @access	protected
 	 * @since	1.6
 	 * @var		string
 	 */
@@ -28,7 +29,6 @@ class EForm extends JObject
 	/**
 	 * An array of options for form groups.
 	 *
-	 * @access	protected
 	 * @since	1.6
 	 * @var		array
 	 */
@@ -37,7 +37,6 @@ class EForm extends JObject
 	/**
 	 * Form groups containing field objects.
 	 *
-	 * @access	protected
 	 * @since	1.6
 	 * @var		array
 	 */
@@ -46,7 +45,6 @@ class EForm extends JObject
 	/**
 	 * Form data containing field values.
 	 *
-	 * @access	protected
 	 * @since	1.6
 	 * @var		array
 	 */
@@ -55,7 +53,6 @@ class EForm extends JObject
 	/**
 	 * Form options.
 	 *
-	 * @access	protected
 	 * @since	1.6
 	 * @var		array
 	 */
@@ -64,7 +61,6 @@ class EForm extends JObject
 	/**
 	 * Method to get an instance of a form.
 	 *
-	 * @access	public
 	 * @param	string		$name		The name of the form.
 	 * @param	string		$data		The name of an XML file or an XML string.
 	 * @param	string		$file		Flag to toggle whether the $data is a file path or a string.
@@ -72,7 +68,7 @@ class EForm extends JObject
 	 * @return	object		A JForm instance.
 	 * @since	1.6
 	 */
-	public function &getInstance($data, $name = 'form', $file = true, $options = array())
+	public static function &getInstance($data, $name = 'form', $file = true, $options = array())
 	{
 		static $instances;
 
@@ -104,7 +100,6 @@ class EForm extends JObject
 	/**
 	 * Method to construct the object on instantiation.
 	 *
-	 * @access	protected
 	 * @param	array		$options	An array of form options.
 	 * @return	void
 	 * @since	1.6
@@ -118,7 +113,6 @@ class EForm extends JObject
 	/**
 	 * Method to get the form name.
 	 *
-	 * @access	public
 	 * @return	string		The name of the form.
 	 * @since	1.6
 	 */
@@ -130,7 +124,6 @@ class EForm extends JObject
 	/**
 	 * Method to set the form name.
 	 *
-	 * @access	public
 	 * @param	string		$name	The new name of the form.
 	 * @return	void
 	 * @since	1.6
@@ -143,7 +136,6 @@ class EForm extends JObject
 	/**
 	 * Method to recursively bind values to form fields.
 	 *
-	 * @access	public
 	 * @param	mixed		$data	An array or object of form values.
 	 * @param	string		$group	The group to bind the fields to.
 	 * @return	boolean		True on success, false otherwise.
@@ -207,7 +199,6 @@ class EForm extends JObject
 	 * that have already been created they will be replaced with the fields
 	 * in the new file unless the $reset parameter has been set to false.
 	 *
-	 * @access	public
 	 * @param	string		$data		The name of an XML file or an XML string.
 	 * @param	string		$file		Flag to toggle whether the $data is a file path or a string.
 	 * @param	string		$reset		Flag to toggle whether the form description should be reset.
@@ -270,7 +261,6 @@ class EForm extends JObject
 	 * This function loads all files that have the via $name defined prefix
 	 * in the folders defined by addIncludePath()
 	 *
-	 * @access	public
 	 * @param	string		$name		The prefix-name of the XML files
 	 * @return	boolean		True on success, false otherwise.
 	 * @since	1.6
@@ -299,7 +289,6 @@ class EForm extends JObject
 	/**
 	 * Method to recursively filter data for form fields.
 	 *
-	 * @access	public
 	 * @param	array		$data		The data to filter.
 	 * @param	string		$limit		An optional group to limit the filtering to.
 	 * @return	array		An array of filtered data.
@@ -307,6 +296,7 @@ class EForm extends JObject
 	 */
 	public function filter($data, $limit = null)
 	{
+		// Initialize variables.
 		$return = array();
 
 		// The data must be an object or array.
@@ -314,6 +304,9 @@ class EForm extends JObject
 			return false;
 		}
 
+		// Get some system objects.
+		$config	= JFactory::getConfig();
+		$user	= JFactory::getUser();
 		// Convert objects to arrays.
 		if (is_object($data))
 		{
@@ -370,6 +363,20 @@ class EForm extends JObject
 							// Handle the different filter options.
 							switch (strtoupper($filter))
 							{
+								case 'RULES':
+									$return[$name] = array();
+									foreach ((array) $data[$name] as $action => $ids)
+									{
+										// Build the rules array.
+										$return[$name][$action] = array();
+										foreach ($ids as $id => $p)
+										{
+											if ($p !== '') {
+												$return[$name][$action][$id] = ($p == '1' || $p == 'true') ? true : false;
+											}
+										}
+									}
+									break;
 								case 'UNSET':
 									// Do nothing.
 									break;
@@ -382,6 +389,28 @@ class EForm extends JObject
 								case 'SAFEHTML':
 									// Filter safe HTML.
 									$return[$name] = $safeHtmlFilter->clean($data[$name], $filter);
+									break;
+
+								case 'SERVER_UTC':
+									// Convert a date to UTC based on the server timezone offset.
+									if (intval($data[$name]))
+									{
+										$offset	= $config->getValue('config.offset');
+
+										$date	= JFactory::getDate($data[$name], $offset);
+										$return[$name] = $date->toMySQL();
+									}
+									break;
+
+								case 'USER_UTC':
+									// Convert a date to UTC based on the user timezone offset.
+									if (intval($data[$name]))
+									{
+										$offset	= $user->getParam('timezone', $config->getValue('config.offset'));
+
+										$date   = JFactory::getDate($data[$name], $offset);
+										$return[$name] = $date->toMySQL();
+									}
 									break;
 
 								default:
@@ -417,7 +446,6 @@ class EForm extends JObject
 	 * Validation warnings will be pushed into JForm::_errors and should be
 	 * retrieved with JForm::getErrors() when validate returns boolean false.
 	 *
-	 * @access	public
 	 * @param	array		$data		An array of field values to validate.
 	 * @param	string		$limit		An option group to limit the validation to.
 	 * @return	mixed		Boolean on success, JException on error.
@@ -476,7 +504,6 @@ class EForm extends JObject
 	/**
 	 * Method to add a field to a group.
 	 *
-	 * @access	public
 	 * @param	object		$field		The field object to add.
 	 * @param	string		$group		The group to add the field to.
 	 * @return	void
@@ -491,7 +518,6 @@ class EForm extends JObject
 	/**
 	 * Method to add an array of fields to a group.
 	 *
-	 * @access	public
 	 * @param	array		$fields	An array of field objects to add.
 	 * @param	string		$group	The group to add the fields to.
 	 * @return	void
@@ -508,7 +534,6 @@ class EForm extends JObject
 	/**
 	 * Method to get a form field.
 	 *
-	 * @access	public
 	 * @param	string		$name			The name of the form field.
 	 * @param	string		$group			The group the field is in.
 	 * @param	mixed		$formControl	The optional form control. Set to false to disable.
@@ -553,6 +578,8 @@ class EForm extends JObject
 			$groupControl = false;
 		} elseif ($groupControl == '_default' && $group !== '_default' && $this->_fieldsets[$group]['array'] == true) {
 			$groupControl = $group;
+		} elseif ($groupControl == '_default' && $group !== '_default' && is_string($this->_fieldsets[$group]['array']) && strlen($this->_fieldsets[$group]['array'])) {
+			$groupControl = $this->_fieldsets[$group]['array'];
 		}
 
 		// Render the field.
@@ -562,7 +589,6 @@ class EForm extends JObject
 	/**
 	 * Method to get a field attribute value.
 	 *
-	 * @access	public
 	 * @param	string		$field			The name of the field.
 	 * @param	string		$attribute		The name of the attribute.
 	 * @param	mixed		$default		The default value of the attribute.
@@ -585,7 +611,6 @@ class EForm extends JObject
 	/**
 	 * Method to replace a field in a group.
 	 *
-	 * @access	public
 	 * @param	object		$field		The field object to replace.
 	 * @param	string		$group		The group to replace the field in.
 	 * @return	boolean		True on success, false when field does not exist.
@@ -607,7 +632,6 @@ class EForm extends JObject
 	/**
 	 * Method to remove a field from a group.
 	 *
-	 * @access	public
 	 * @param	string		$field		The field to remove.
 	 * @param	string		$group		The group to remove.
 	 * @return	void
@@ -621,7 +645,6 @@ class EForm extends JObject
 	/**
 	 * Method to set a field attribute value.
 	 *
-	 * @access	public
 	 * @param	string		$field			The name of the field.
 	 * @param	string		$attribute		The name of the attribute.
 	 * @param	mixed		$value			The value to set the attribute to.
@@ -645,7 +668,6 @@ class EForm extends JObject
 	/**
 	 * Method to get the fields in a group.
 	 *
-	 * @access	public
 	 * @param	string		$group			The form field group.
 	 * @param	mixed		$formControl	The optional form control. Set to false to disable.
 	 * @param	mixed		$groupControl	The optional group control. Set to false to disable.
@@ -668,6 +690,8 @@ class EForm extends JObject
 			$groupControl = false;
 		} elseif ($groupControl == '_default' && $group !== '_default' && isset($this->_fieldsets[$group]) && $this->_fieldsets[$group]['array'] == true) {
 			$groupControl = $group;
+		} elseif ($groupControl == '_default' && $group !== '_default' && isset($this->_fieldsets[$group]) && is_string($this->_fieldsets[$group]['array']) && strlen($this->_fieldsets[$group]['array'])) {
+			$groupControl = $this->_fieldsets[$group]['array'];
 		}
 
 		// Check if the group exists.
@@ -699,7 +723,6 @@ class EForm extends JObject
 	/**
 	 * Method to assign an array of fields to a group.
 	 *
-	 * @access	public
 	 * @param	array		$fields		An array of field objects to assign.
 	 * @param	string		$group		The group to assign the fields to.
 	 * @return	void
@@ -724,7 +747,6 @@ class EForm extends JObject
 	/**
 	 * Method to get a list of groups.
 	 *
-	 * @access	public
 	 * @return	array	An array of groups.
 	 * @since	1.6
 	 */
@@ -736,7 +758,6 @@ class EForm extends JObject
 	/**
 	 * Method to remove a group.
 	 *
-	 * @access	public
 	 * @param	string		$group		The group to remove.
 	 * @return	void
 	 * @since	1.6
@@ -749,7 +770,6 @@ class EForm extends JObject
 	/**
 	 * Method to get the input control for a field.
 	 *
-	 * @access	public
 	 * @param	string		$name			The field name.
 	 * @param	string		$group			The group the field is in.
 	 * @param	mixed		$formControl	The optional form control. Set to false to disable.
@@ -769,7 +789,6 @@ class EForm extends JObject
 	/**
 	 * Method to get the label for a field.
 	 *
-	 * @access	public
 	 * @param	string		$name			The field name.
 	 * @param	string		$group			The group the field is in.
 	 * @param	mixed		$formControl	The optional form control. Set to false to disable.
@@ -789,7 +808,6 @@ class EForm extends JObject
 	/**
 	 * Method to get the value of a field.
 	 *
-	 * @access	public
 	 * @param	string		$field		The field to set.
 	 * @param	mixed		$default	The default value of the field if empty.
 	 * @param	string		$group		The group the field is in.
@@ -811,7 +829,6 @@ class EForm extends JObject
 	/**
 	 * Method to set the value of a field.
 	 *
-	 * @access	public
 	 * @param	string		$field		The field to set.
 	 * @param	mixed		$value		The value to set the field to.
 	 * @param	string		$group		The group the field is in.
@@ -832,7 +849,6 @@ class EForm extends JObject
 	/**
 	 * Loads form fields from an XML fields element optionally reseting fields before loading new ones.
 	 *
-	 * @access	public
 	 * @param	object		$xml		The XML fields object.
 	 * @param	boolean		$reset		Flag to toggle whether the form groups should be reset.
 	 * @return	boolean		True on success, false otherwise.
@@ -884,10 +900,20 @@ class EForm extends JObject
 		}
 
 		// Get the fieldset array option.
-		if ($xml->attributes('array') == 'true') {
-			$this->_fieldsets[$group]['array'] = true;
-		} else {
-			$this->_fieldsets[$group]['array'] = false;
+		switch ($xml->attributes('array'))
+		{
+			case 'true':
+				$this->_fieldsets[$group]['array'] = true;
+				break;
+
+			case 'false':
+			case '':
+				$this->_fieldsets[$group]['array'] = false;
+				break;
+
+			default:
+				$this->_fieldsets[$group]['array'] = $xml->attributes('array');
+				break;
 		}
 
 		// Check if there is a field path to handle.
@@ -909,7 +935,6 @@ class EForm extends JObject
 	/**
 	 * Method to load a form field object.
 	 *
-	 * @access	public
 	 * @param	string		$type		The field type.
 	 * @param	boolean		$new		Flag to toggle whether we should get a new instance of the object.
 	 * @return	mixed		Field object on success, false otherwise.
@@ -979,13 +1004,12 @@ class EForm extends JObject
 	/**
 	 * Method to add a path to the list of form include paths.
 	 *
-	 * @access	public
 	 * @param	mixed		$new		A path or array of paths to add.
 	 * @return	array		The list of paths that have been added.
 	 * @since	1.6
 	 * @static
 	 */
-	public function addFormPath($new = null)
+	public static function addFormPath($new = null)
 	{
 		static $paths;
 
@@ -1009,13 +1033,12 @@ class EForm extends JObject
 	/**
 	 * Method to add a path to the list of field include paths.
 	 *
-	 * @access	public
 	 * @param	mixed		$new		A path or array of paths to add.
 	 * @return	array		The list of paths that have been added.
 	 * @since	1.6
 	 * @static
 	 */
-	public function addFieldPath($new = null)
+	public static function addFieldPath($new = null)
 	{
 		static $paths;
 
